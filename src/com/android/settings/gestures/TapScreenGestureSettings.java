@@ -16,6 +16,9 @@
 
 package com.android.settings.gestures;
 
+import static android.provider.Settings.Secure.DOZE_DOUBLE_TAP_GESTURE;
+
+import androidx.preference.SwitchPreference;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.hardware.display.AmbientDisplayConfiguration;
@@ -29,6 +32,8 @@ import com.android.settings.overlay.FeatureFactory;
 import com.android.settings.search.BaseSearchIndexProvider;
 import com.android.settingslib.search.Indexable;
 import com.android.settingslib.search.SearchIndexable;
+import android.os.UserHandle;
+import android.provider.Settings;
 
 import java.util.Arrays;
 import java.util.List;
@@ -50,6 +55,15 @@ public class TapScreenGestureSettings extends DashboardFragment {
 
         use(TapScreenGesturePreferenceController.class)
                 .setConfig(new AmbientDisplayConfiguration(context));
+
+        // Disable gesture_tap if double_tap is enabled
+        SwitchPreference gestureTap = (SwitchPreference) findPreference("gesture_tap");
+        boolean doubleTapEnabled = Settings.Secure.getInt(context.getContentResolver(), DOZE_DOUBLE_TAP_GESTURE, 0);
+        if (doubleTapEnabled){
+            gestureTap.setEnabled(false);
+        }else{
+            gestureTap.setEnabled(true);
+        }
     }
 
     @Override
